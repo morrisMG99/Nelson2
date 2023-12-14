@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad Extra</title>
+    <link rel="manifest" href="manifest.json" />
+    <script src="app.js" ></script>
+    
+</head>
+<style>
+    .button {
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button2 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+
+</style>
+<body>
+    <h1 align="center">Caracteristicas de los personajes de StarWars</h1>
+    <h3><li>García Fuentes Mauricio</li></h3>
+    <ul id="authors">
+    </ul>
+    
+    <script>
+
+        //Se manda a identificar el Id, al que le pusimos el nombre authors
+        //También se manda a llamar la URL de la API, para que nos aparezcan varios personajes y no solo un dato
+        const ul = document.getElementById('authors');
+        const url ="https://swapi.dev/api/people/?format=json";
+        //Creamos un nuevo elemento
+        function createNode(element){
+            return document.createElement(element);
+        }
+        //Agregamos otro nuevo elemento
+        function append(parent, el){
+            return parent.appendChild(el);
+        }
+
+        //Mandanmos a llamar a la constante URL y le decimos que la respuesta sea en formato JSON
+        fetch(url)
+            .then((resp) => resp.json())
+            //Aquí mandamos a llamar los datos obtenidos de la API
+            .then(function(data){
+                let authors = data.results;
+                //Busca a cada autor y agrega un nuevo elemento con li y span 
+                return authors.map(function(author){
+                    let li = createNode('li');
+                    let span = createNode('span');
+
+                    //Aquí lo mandamos a llamar para que se visualice en la pagina HTML y los datos que querramos que se visualicen
+                    span.innerHTML = `Nombre: ${author.name} ,<br>Altura: ${author.height},<br>Peso:  ${author.mass},<br>Color de Cabello:  ${author.hair_color} ,<br>Color de ojos:${author.skin_color}`;
+
+                    append(li, span);
+                    append(ul, li);
+
+                })
+            })
+            //Busca cualquier error que pueda ocurrir y en caso de que encuentre uno, manda un error en la consola
+            .catch(function(error){
+                console.log('ERROR al momento de encontrar la API');
+            })
+    </script>
+    <a href="bd.html"></a>
+    <button class="button button2" >Ver Base de datos</button>
+</a>
+</body>
+</html>

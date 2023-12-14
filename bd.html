@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndexedDB Ejemplo</title>
+</head>
+<body>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dbName = 'swapiDB';
+  const tableName = 'people';
+
+  const request = indexedDB.open(dbName, 1);
+
+  request.onerror = function(event) {
+    console.error("Error opening database:", event.target.error);
+  };
+
+  request.onupgradeneeded = function(event) {
+    const db = event.target.result;
+
+    // Crear una tabla si no existe
+    const objectStore = db.createObjectStore(tableName, { keyPath: 'id' });
+
+    // Crear índices para nombre, altura y peso
+    objectStore.createIndex('name', 'name', { unique: false });
+    objectStore.createIndex('height', 'height', { unique: false });
+    objectStore.createIndex('mass', 'mass', { unique: false });
+  };
+
+  request.onsuccess = function(event) {
+    const db = event.target.result;
+
+    fetch('https://swapi.dev/api/people/?format=json')
+      .then(response => response.json())
+      .then(data => {
+        const transaction = db.transaction(tableName, 'readwrite');
+        const objectStore = transaction.objectStore(tableName);
+
+        // Almacenar nombre, altura y peso de cada persona
+        data.results.forEach(person => {
+          const { name, height, mass } = person;
+          objectStore.add({ name, height, mass });
+        });
+
+        console.log('Datos almacenados en IndexedDB');
+      })
+      .catch(error => {
+        console.error('Error al obtener datos de la API:', error);
+      });
+  };
+});
+</script>
+
+</body>
+</html>
